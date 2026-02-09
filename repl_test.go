@@ -31,6 +31,8 @@ func TestCleanInput(t *testing.T) {
 		if len(actual) != len(c.expected) {
 			t.Errorf("expected slice of length %d, got: %d",
 				len(c.expected), len(actual))
+
+			return
 		}
 
 		for i := range actual {
@@ -40,6 +42,8 @@ func TestCleanInput(t *testing.T) {
 			if word != expectedWord {
 				t.Errorf("mismatch at index %d: expected %s, got: %s",
 					i, expectedWord, word)
+
+				return
 			}
 		}
 	}
