@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/rQxwX3/pokedex/internal/pokecache"
 	"os"
 	"strings"
+	"time"
 )
 
 func CleanInput(text string) []string {
@@ -18,8 +20,9 @@ func CleanInput(text string) []string {
 }
 
 type config struct {
-	Next string
-	Prev string
+	Next  string
+	Prev  string
+	Cache *pokecache.Cache
 }
 
 type cliCommand struct {
@@ -58,7 +61,13 @@ func initCommandMap() {
 
 func main() {
 	initCommandMap()
-	conf := config{"", ""}
+
+	conf := config{
+		Next:  "",
+		Prev:  "",
+		Cache: pokecache.NewCache(5 * time.Second),
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {

@@ -35,9 +35,9 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 func (c *Cache) reapLoop(interval time.Duration) {
 	ticker := time.NewTicker(interval)
 
-	c.mt.Lock()
-
 	for range ticker.C {
+		c.mt.Lock()
+
 		for key, entry := range c.Map {
 			if time.Since(entry.createdAt) > interval {
 				delete(c.Map, key)

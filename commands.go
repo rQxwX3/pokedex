@@ -30,7 +30,7 @@ func CommandMap(conf *config) error {
 	}
 
 	var locations Locations
-	if err := APIGet(url, &locations); err != nil {
+	if err := APIGet(url, conf.Cache, &locations); err != nil {
 		return err
 	}
 
@@ -51,7 +51,7 @@ func CommandMapBack(conf *config) error {
 	}
 
 	var locations Locations
-	if err := APIGet(conf.Prev, &locations); err != nil {
+	if err := APIGet(conf.Prev, conf.Cache, &locations); err != nil {
 		return err
 	}
 
