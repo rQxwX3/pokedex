@@ -17,47 +17,48 @@ func CleanInput(text string) []string {
 	return words
 }
 
+type config struct {
+	Next string
+	Prev string
+}
+
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(conf *config) error
 }
 
-var commandMap = map[string]cliCommand{}
-
-func CommandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-
-	return nil
-}
-
-func CommandHelp() error {
-	fmt.Println("Welcome to the Pokedex!\nUsage:\n")
-
-	for _, cmd := range commandMap {
-		fmt.Println(cmd.name + ": " + cmd.description)
-	}
-
-	return nil
-}
+var nameToCommand = map[string]cliCommand{}
 
 func initCommandMap() {
-	commandMap["exit"] = cliCommand{
+	nameToCommand["exit"] = cliCommand{
 		name:        "exit",
 		description: "Exit the Pokedex",
 		callback:    CommandExit,
 	}
 
-	commandMap["help"] = cliCommand{
+	nameToCommand["help"] = cliCommand{
 		name:        "help",
 		description: "Print Pokedex help message",
 		callback:    CommandHelp,
+	}
+
+	nameToCommand["map"] = cliCommand{
+		name:        "map",
+		description: "Print next 20 locations",
+		callback:    CommandMap,
+	}
+
+	nameToCommand["mapb"] = cliCommand{
+		name:        "mapb",
+		description: "Print previous 20 locations",
+		callback:    CommandMapBack,
 	}
 }
 
 func main() {
 	initCommandMap()
+	conf := config{"", ""}
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -66,13 +67,13 @@ func main() {
 		scanner.Scan()
 		words := CleanInput(scanner.Text())
 
-		cliCommandStruct, ok := commandMap[words[0]]
+		cliCommandStruct, ok := nameToCommand[words[0]]
 		if !ok {
 			fmt.Println("Unknown command")
 			continue
 		}
 
-		err := cliCommandStruct.callback()
+		err := cliCommandStruct.callback(&conf)
 		if err != nil {
 			fmt.Printf("Command callback failed: %v\n", err)
 			os.Exit(1)
