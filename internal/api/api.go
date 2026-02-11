@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -8,7 +8,29 @@ import (
 	"net/http"
 )
 
-func APIGet(url string, cache *pokecache.Cache, storage any) error {
+type Locations struct {
+	Next     string
+	Previous string
+	Results  []Location
+}
+
+type Location struct {
+	Name string
+}
+
+type LocationArea struct {
+	Pokemons []struct {
+		Pokemon struct {
+			Name string `json:"name"`
+		} `json:"pokemon"`
+	} `json:"pokemon_encounters"`
+}
+
+type Pokemon struct {
+	Experience int `json:"base_experience"`
+}
+
+func Get(url string, cache *pokecache.Cache, storage any) error {
 	if cachedData, ok := cache.Get(url); ok {
 		if err := json.Unmarshal(cachedData, storage); err != nil {
 			return err
@@ -24,7 +46,7 @@ func APIGet(url string, cache *pokecache.Cache, storage any) error {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return errors.New("API request was unsuccessful")
+		return errors.New("API request failed")
 	}
 
 	body, err := io.ReadAll(res.Body)

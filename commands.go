@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/rQxwX3/pokedex/internal/api"
+	"math/rand"
 	"os"
 )
 
@@ -30,8 +32,8 @@ func CommandMap(conf *config) error {
 		url = conf.Next
 	}
 
-	var locations Locations
-	if err := APIGet(url, conf.Cache, &locations); err != nil {
+	var locations api.Locations
+	if err := api.Get(url, conf.Cache, &locations); err != nil {
 		return err
 	}
 
@@ -51,8 +53,8 @@ func CommandMapBack(conf *config) error {
 		return nil
 	}
 
-	var locations Locations
-	if err := APIGet(conf.Prev, conf.Cache, &locations); err != nil {
+	var locations api.Locations
+	if err := api.Get(conf.Prev, conf.Cache, &locations); err != nil {
 		return err
 	}
 
@@ -66,6 +68,48 @@ func CommandMapBack(conf *config) error {
 	return nil
 }
 
-// func CommandExplore(location Location) error {
-//
-// }
+func CommandExplore(conf *config) error {
+	url := "https://pokeapi.co/api/v2/location-area/" + conf.Args[0]
+
+	var locationArea api.LocationArea
+	if err := api.Get(url, conf.Cache, &locationArea); err != nil {
+		return err
+	}
+
+	for _, pokemon := range locationArea.Pokemons {
+		fmt.Println(pokemon.Pokemon.Name)
+	}
+
+	return nil
+}
+
+func calculateChance(pokemon api.Pokemon) int {
+	return (1000 / pokemon.Experience) % 100
+}
+
+func CommandCatch(conf *config) error {
+	pokemonName := conf.Args[0]
+
+	url := "https://pokeapi.co/api/v2/pokemon/" + pokemonName
+
+	var pokemon api.Pokemon
+	if err := api.Get(url, conf.Cache, &pokemon); err != nil {
+		return err
+	}
+
+	fmt.Println("Throwing a Pokeball at " + pokemonName + "...")
+	pokedex := conf.Pokedex
+
+	if rand.Intn(101) < calculateChance(pokemon) {
+		pokedex.pokemons = append(pokedex.pokemons, pokemonName)
+		fmt.Println(pokemonName + " was caught!")
+	} else {
+		fmt.Println(pokemonName + " escaped!")
+	}
+
+	return nil
+}
+
+func CommandInspect(conf *Config) error {
+	pokedex := 	
+}
