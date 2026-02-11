@@ -18,7 +18,7 @@ func CommandHelp(conf *config) error {
 	fmt.Println("Welcome to the Pokedex!\nUsage:")
 	fmt.Println()
 
-	for _, cmd := range nameToCommand {
+	for _, cmd := range conf.cmdsMap {
 		fmt.Println(cmd.name + ": " + cmd.description)
 	}
 
@@ -28,12 +28,12 @@ func CommandHelp(conf *config) error {
 func CommandMap(conf *config) error {
 	url := "https://pokeapi.co/api/v2/location-area"
 
-	if conf.Next != "" {
-		url = conf.Next
+	if conf.next != "" {
+		url = conf.next
 	}
 
 	var locations api.Locations
-	if err := api.Get(url, conf.Cache, &locations); err != nil {
+	if err := api.Get(url, conf.cache, &locations); err != nil {
 		return err
 	}
 
@@ -41,20 +41,20 @@ func CommandMap(conf *config) error {
 		fmt.Println(location.Name)
 	}
 
-	conf.Next = locations.Next
-	conf.Prev = locations.Previous
+	conf.next = locations.Next
+	conf.prev = locations.Previous
 
 	return nil
 }
 
 func CommandMapBack(conf *config) error {
-	if conf.Prev == "" {
+	if conf.prev == "" {
 		fmt.Println("you're on the first page")
 		return nil
 	}
 
 	var locations api.Locations
-	if err := api.Get(conf.Prev, conf.Cache, &locations); err != nil {
+	if err := api.Get(conf.prev, conf.cache, &locations); err != nil {
 		return err
 	}
 
@@ -62,17 +62,17 @@ func CommandMapBack(conf *config) error {
 		fmt.Println(location.Name)
 	}
 
-	conf.Next = locations.Next
-	conf.Prev = locations.Previous
+	conf.next = locations.Next
+	conf.prev = locations.Previous
 
 	return nil
 }
 
 func CommandExplore(conf *config) error {
-	url := "https://pokeapi.co/api/v2/location-area/" + conf.Args[0]
+	url := "https://pokeapi.co/api/v2/location-area/" + conf.args[0]
 
 	var locationArea api.LocationArea
-	if err := api.Get(url, conf.Cache, &locationArea); err != nil {
+	if err := api.Get(url, conf.cache, &locationArea); err != nil {
 		return err
 	}
 
@@ -89,17 +89,17 @@ func calculateChance(pokemon api.Pokemon) int {
 }
 
 func CommandCatch(conf *config) error {
-	pokemonName := conf.Args[0]
+	pokemonName := conf.args[0]
 
 	url := "https://pokeapi.co/api/v2/pokemon/" + pokemonName
 
 	var pokemon api.Pokemon
-	if err := api.Get(url, conf.Cache, &pokemon); err != nil {
+	if err := api.Get(url, conf.cache, &pokemon); err != nil {
 		return err
 	}
 
 	fmt.Println("Throwing a Pokeball at " + pokemonName + "...")
-	pokedex := conf.Pokedex
+	pokedex := conf.pokedex
 
 	if rand.Intn(101) < calculateChance(pokemon) {
 		if _, ok := pokedex[pokemonName]; !ok {
@@ -115,13 +115,13 @@ func CommandCatch(conf *config) error {
 }
 
 func CommandInspect(conf *config) error {
-	pokemon, ok := conf.Pokedex[conf.Args[0]]
+	pokemon, ok := conf.pokedex[conf.args[0]]
 	if !ok {
 		fmt.Println("you have not caught that pokemon")
 		return nil
 	}
 
-	fmt.Println("Name:", conf.Args[0])
+	fmt.Println("Name:", conf.args[0])
 	fmt.Println("Height:", pokemon.Height)
 	fmt.Println("Weight:", pokemon.Weight)
 

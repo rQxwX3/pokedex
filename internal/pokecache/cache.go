@@ -1,14 +1,8 @@
 package pokecache
 
 import (
-	"sync"
 	"time"
 )
-
-type Cache struct {
-	Map map[string]CacheEntry
-	mt  sync.Mutex
-}
 
 func (c *Cache) Add(key string, val []byte) {
 	c.mt.Lock()
@@ -57,9 +51,4 @@ func NewCache(interval time.Duration) *Cache {
 	go cache.reapLoop(interval)
 
 	return cache
-}
-
-type CacheEntry struct {
-	createdAt time.Time
-	val       []byte
 }
