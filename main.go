@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/rQxwX3/pokedex/internal/api"
 	"github.com/rQxwX3/pokedex/internal/pokecache"
 	"os"
 	"strings"
@@ -19,6 +20,8 @@ func CleanInput(text string) []string {
 	return words
 }
 
+type pokedex map[string]api.Pokemon
+
 type config struct {
 	Next    string
 	Prev    string
@@ -32,10 +35,6 @@ type cliCommand struct {
 	description    string
 	callback       func(conf *config) error
 	argumentsCount int
-}
-
-type pokedex struct {
-	pokemons []string
 }
 
 var nameToCommand = map[string]cliCommand{}
@@ -86,7 +85,7 @@ func initCommandMap() {
 	nameToCommand["inspect"] = cliCommand{
 		name:           "inspect [pokemon]",
 		description:    "Get info about specified Pokemon",
-		callback:       CommandCatch,
+		callback:       CommandInspect,
 		argumentsCount: 1,
 	}
 }
@@ -95,10 +94,11 @@ func main() {
 	initCommandMap()
 
 	conf := config{
-		Next:  "",
-		Prev:  "",
-		Cache: pokecache.NewCache(5 * time.Second),
-		Args:  []string{},
+		Next:    "",
+		Prev:    "",
+		Cache:   pokecache.NewCache(5 * time.Second),
+		Args:    []string{},
+		Pokedex: pokedex{},
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -115,12 +115,21 @@ func main() {
 			continue
 		}
 
-		conf.Args = append(conf.Args, words[1:]...)
+		args := words[1:]
+		if len(args) != cliCommandStruct.argumentsCount {
+			fmt.Println("This command requires argument(s).",
+				"Run help command for more info.")
 
+			continue
+		}
+
+		conf.Args = append(conf.Args, args...)
 		err := cliCommandStruct.callback(&conf)
+
+		conf.Args = conf.Args[:0]
+
 		if err != nil {
 			fmt.Printf("Command callback failed: %v\n", err)
-			os.Exit(1)
 		}
 	}
 }

@@ -84,7 +84,8 @@ func CommandExplore(conf *config) error {
 }
 
 func calculateChance(pokemon api.Pokemon) int {
-	return (1000 / pokemon.Experience) % 100
+	// return (1000 / pokemon.Experience) % 100
+	return 1000
 }
 
 func CommandCatch(conf *config) error {
@@ -101,7 +102,10 @@ func CommandCatch(conf *config) error {
 	pokedex := conf.Pokedex
 
 	if rand.Intn(101) < calculateChance(pokemon) {
-		pokedex.pokemons = append(pokedex.pokemons, pokemonName)
+		if _, ok := pokedex[pokemonName]; !ok {
+			pokedex[pokemonName] = pokemon
+		}
+
 		fmt.Println(pokemonName + " was caught!")
 	} else {
 		fmt.Println(pokemonName + " escaped!")
@@ -110,6 +114,26 @@ func CommandCatch(conf *config) error {
 	return nil
 }
 
-func CommandInspect(conf *Config) error {
-	pokedex := 	
+func CommandInspect(conf *config) error {
+	pokemon, ok := conf.Pokedex[conf.Args[0]]
+	if !ok {
+		fmt.Println("you have not caught that pokemon")
+		return nil
+	}
+
+	fmt.Println("Name:", conf.Args[0])
+	fmt.Println("Height:", pokemon.Height)
+	fmt.Println("Weight:", pokemon.Weight)
+
+	fmt.Println("Stats:")
+	for _, stat := range pokemon.Stats {
+		fmt.Println("  -", stat.StatInfo.Name+":", stat.Value)
+	}
+
+	fmt.Println("Types:")
+	for _, pokeType := range pokemon.Types {
+		fmt.Println("  -", pokeType.Type.Name)
+	}
+
+	return nil
 }

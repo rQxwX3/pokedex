@@ -27,7 +27,23 @@ type LocationArea struct {
 }
 
 type Pokemon struct {
+	Height     int `json:"height"`
+	Weight     int `json:"weight"`
 	Experience int `json:"base_experience"`
+
+	Stats []struct {
+		Value int `json:"base_stat"`
+
+		StatInfo struct {
+			Name string `json:"name"`
+		} `json:"stat"`
+	} `json:"stats"`
+
+	Types []struct {
+		Type struct {
+			Name string `json:"name"`
+		} `json:"type"`
+	} `json:"types"`
 }
 
 func Get(url string, cache *pokecache.Cache, storage any) error {
@@ -45,8 +61,10 @@ func Get(url string, cache *pokecache.Cache, storage any) error {
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != http.StatusOK {
-		return errors.New("API request failed")
+	if res.StatusCode == http.StatusNotFound {
+		return errors.New("Data not found. Please check url.")
+	} else if res.StatusCode != http.StatusOK {
+		return errors.New("Failed to fetch data")
 	}
 
 	body, err := io.ReadAll(res.Body)
