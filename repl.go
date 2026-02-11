@@ -9,7 +9,7 @@ import (
 
 const (
 	prompt       = "Pokedex > "
-	unknown      = "Unknown command:"
+	unknowncmd   = "Unknown command:"
 	noarg        = "This command requires argument(s). Run help command for more info."
 	callbackfail = "Command callback failed: "
 )
@@ -44,7 +44,7 @@ func getCliCommand(words []string,
 	cmd, ok := (*commandsMap)[words[0]]
 
 	if !ok {
-		fmt.Println(unknown, words[0])
+		fmt.Println(unknowncmd, words[0])
 		return cliCmd{}, nil, false
 	}
 
