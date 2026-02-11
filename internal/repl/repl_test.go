@@ -1,6 +1,9 @@
-package main
+package repl
 
-import "testing"
+import (
+	"github.com/rQxwX3/pokedex/internal/types"
+	"testing"
+)
 
 func TestCleanInput(t *testing.T) {
 	cases := []struct {
@@ -49,41 +52,41 @@ func TestCleanInput(t *testing.T) {
 	}
 }
 
-func cmpCliCmds(c1 cliCmd, c2 cliCmd) bool {
-	return c1.argsCount == c2.argsCount &&
-		c1.description == c2.description &&
-		c1.name == c2.name
+func cmpCliCmds(c1 types.CliCmd, c2 types.CliCmd) bool {
+	return c1.ArgsCount == c2.ArgsCount &&
+		c1.Description == c2.Description &&
+		c1.Name == c2.Name
 }
 
 func TestGetCliCommand(t *testing.T) {
-	cmd0 := cliCmd{
-		name:        "cmd0",
-		description: "desc0",
-		callback:    nil,
-		argsCount:   0,
+	cmd0 := types.CliCmd{
+		Name:        "cmd0",
+		Description: "desc0",
+		Callback:    nil,
+		ArgsCount:   0,
 	}
 
-	cmd1 := cliCmd{
-		name:        "cmd1",
-		description: "desc1",
-		callback:    nil,
-		argsCount:   1,
+	cmd1 := types.CliCmd{
+		Name:        "cmd1",
+		Description: "desc1",
+		Callback:    nil,
+		ArgsCount:   1,
 	}
 
-	cmd2 := cliCmd{
-		name:        "cmd2",
-		description: "desc2",
-		callback:    nil,
-		argsCount:   2,
+	cmd2 := types.CliCmd{
+		Name:        "cmd2",
+		Description: "desc2",
+		Callback:    nil,
+		ArgsCount:   2,
 	}
 
-	cmdsMap := cliCmdsMap{"cmd0": cmd0, "cmd1": cmd1, "cmd2": cmd2}
+	cmdsMap := types.CliCmdsMap{"cmd0": cmd0, "cmd1": cmd1, "cmd2": cmd2}
 
 	cases := []struct {
 		input []string
 
 		expTrue   bool
-		expCliCmd cliCmd
+		expCliCmd types.CliCmd
 		expArgs   []string
 	}{
 		{
@@ -107,7 +110,7 @@ func TestGetCliCommand(t *testing.T) {
 		{
 			input:     []string{"not", "a", "valid", "command"},
 			expTrue:   false,
-			expCliCmd: cliCmd{},
+			expCliCmd: types.CliCmd{},
 			expArgs:   nil,
 		},
 	}
@@ -117,7 +120,7 @@ func TestGetCliCommand(t *testing.T) {
 
 		if actTrue != c.expTrue {
 			t.Errorf("mismatch at truthness of %s: expected %t, got: %t",
-				c.expCliCmd.name, c.expTrue, actTrue)
+				c.expCliCmd.Name, c.expTrue, actTrue)
 			return
 		}
 

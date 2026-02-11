@@ -2,70 +2,78 @@ package main
 
 import (
 	"github.com/rQxwX3/pokedex/internal/pokecache"
+	"github.com/rQxwX3/pokedex/internal/types"
 	"time"
 )
 
-func initConfig() config {
-	return config{
-		pokedex: pokedex{},
-		cmdsMap: initCommandsMap(),
-		args:    []string{},
-		next:    "",
-		prev:    "",
-		cache:   pokecache.NewCache(5 * time.Second),
+func initConfig() types.Config {
+	return types.Config{
+		Pokedex: types.Pokedex{},
+		CmdsMap: initCommandsMap(),
+		Args:    []string{},
+		Next:    "",
+		Prev:    "",
+		Cache:   pokecache.NewCache(5 * time.Second),
 	}
 }
 
-func initCommandsMap() cliCmdsMap {
-	var cliCommandsMap = cliCmdsMap{}
+func initCommandsMap() types.CliCmdsMap {
+	var cliCommandsMap = types.CliCmdsMap{}
 
-	cliCommandsMap["exit"] = cliCmd{
-		name:        "exit",
-		description: "Exit the Pokedex",
-		callback:    CommandExit,
-		argsCount:   0,
+	cliCommandsMap["exit"] = types.CliCmd{
+		Name:        "exit",
+		Description: "Exit the Pokedex",
+		Callback:    CommandExit,
+		ArgsCount:   0,
 	}
 
-	cliCommandsMap["help"] = cliCmd{
-		name:        "help",
-		description: "Print Pokedex help message",
-		callback:    CommandHelp,
-		argsCount:   0,
+	cliCommandsMap["help"] = types.CliCmd{
+		Name:        "help",
+		Description: "Print Pokedex help message",
+		Callback:    CommandHelp,
+		ArgsCount:   0,
 	}
 
-	cliCommandsMap["map"] = cliCmd{
-		name:        "map",
-		description: "Print next 20 locations",
-		callback:    CommandMap,
-		argsCount:   0,
+	cliCommandsMap["map"] = types.CliCmd{
+		Name:        "map",
+		Description: "Print next 20 locations",
+		Callback:    CommandMap,
+		ArgsCount:   0,
 	}
 
-	cliCommandsMap["mapb"] = cliCmd{
-		name:        "mapb",
-		description: "Print previous 20 locations",
-		callback:    CommandMapBack,
-		argsCount:   0,
+	cliCommandsMap["mapb"] = types.CliCmd{
+		Name:        "mapb",
+		Description: "Print previous 20 locations",
+		Callback:    CommandMapBack,
+		ArgsCount:   0,
 	}
 
-	cliCommandsMap["explore"] = cliCmd{
-		name:        "explore [location]",
-		description: "Print all Pokemons found in specified location",
-		callback:    CommandExplore,
-		argsCount:   1,
+	cliCommandsMap["explore"] = types.CliCmd{
+		Name:        "explore [location]",
+		Description: "Print all Pokemons found in specified location",
+		Callback:    CommandExplore,
+		ArgsCount:   1,
 	}
 
-	cliCommandsMap["catch"] = cliCmd{
-		name:        "catch [pokemon]",
-		description: "Attempt to catch specified Pokemon",
-		callback:    CommandCatch,
-		argsCount:   1,
+	cliCommandsMap["catch"] = types.CliCmd{
+		Name:        "catch [pokemon]",
+		Description: "Attempt to catch specified Pokemon",
+		Callback:    CommandCatch,
+		ArgsCount:   1,
 	}
 
-	cliCommandsMap["inspect"] = cliCmd{
-		name:        "inspect [pokemon]",
-		description: "Get info about specified Pokemon",
-		callback:    CommandInspect,
-		argsCount:   1,
+	cliCommandsMap["inspect"] = types.CliCmd{
+		Name:        "inspect [pokemon]",
+		Description: "Get info about specified Pokemon",
+		Callback:    CommandInspect,
+		ArgsCount:   1,
+	}
+
+	cliCommandsMap["pokedex"] = types.CliCmd{
+		Name:        "pokedex",
+		Description: "List caught pokemons",
+		Callback:    CommandPokedex,
+		ArgsCount:   0,
 	}
 
 	return cliCommandsMap

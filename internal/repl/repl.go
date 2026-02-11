@@ -1,8 +1,9 @@
-package main
+package repl
 
 import (
 	"bufio"
 	"fmt"
+	"github.com/rQxwX3/pokedex/internal/types"
 	"os"
 	"strings"
 )
@@ -14,9 +15,9 @@ const (
 	callbackfail = "Command callback failed: "
 )
 
-func repl(conf *config) error {
+func Run(conf *types.Config) error {
 	scanner := bufio.NewScanner(os.Stdin)
-	commandsMap := conf.cmdsMap
+	commandsMap := conf.CmdsMap
 
 	for {
 		fmt.Print(prompt)
@@ -29,33 +30,33 @@ func repl(conf *config) error {
 			continue
 		}
 
-		conf.args = append(conf.args, args...)
+		conf.Args = append(conf.Args, args...)
 
-		if err := cmd.callback(conf); err != nil {
+		if err := cmd.Callback(conf); err != nil {
 			fmt.Println(callbackfail, err)
 		}
 
-		conf.args = conf.args[:0]
+		conf.Args = conf.Args[:0]
 	}
 }
 
 func getCliCommand(words []string,
-	commandsMap *cliCmdsMap) (cliCmd, []string, bool) {
+	commandsMap *types.CliCmdsMap) (types.CliCmd, []string, bool) {
 	if len(words) < 1 {
-		return cliCmd{}, nil, false
+		return types.CliCmd{}, nil, false
 	}
 
 	cmd, ok := (*commandsMap)[words[0]]
 
 	if !ok {
 		fmt.Println(unknowncmd, words[0])
-		return cliCmd{}, nil, false
+		return types.CliCmd{}, nil, false
 	}
 
 	args := words[1:]
-	if len(args) != cmd.argsCount {
+	if len(args) != cmd.ArgsCount {
 		fmt.Println(noarg)
-		return cliCmd{}, nil, false
+		return types.CliCmd{}, nil, false
 	}
 
 	return cmd, args, true
