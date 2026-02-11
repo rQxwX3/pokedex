@@ -1,7 +1,6 @@
 package main
 
 type Locations struct {
-	Count    int
 	Next     string
 	Previous string
 	Results  []Location
@@ -9,5 +8,8 @@ type Locations struct {
 
 type Location struct {
 	Name string
-	Url  string
 }
+
+// type LocationArea struct {
+//
+// }

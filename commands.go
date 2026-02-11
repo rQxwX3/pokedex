@@ -65,3 +65,7 @@ func CommandMapBack(conf *config) error {
 
 	return nil
 }
+
+// func CommandExplore(location Location) error {
+//
+// }
