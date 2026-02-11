@@ -84,8 +84,9 @@ func CommandExplore(conf *config) error {
 }
 
 func calculateChance(pokemon api.Pokemon) int {
-	// return (1000 / pokemon.Experience) % 100
-	return 1000
+	xp := pokemon.Experience + 1
+
+	return (10 + 1000/xp) % 100
 }
 
 func CommandCatch(conf *config) error {

@@ -41,6 +41,10 @@ func repl(conf *config) error {
 
 func getCliCommand(words []string,
 	commandsMap *cliCmdsMap) (cliCmd, []string, bool) {
+	if len(words) < 1 {
+		return cliCmd{}, nil, false
+	}
+
 	cmd, ok := (*commandsMap)[words[0]]
 
 	if !ok {
